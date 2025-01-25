@@ -27,7 +27,7 @@
             padding: 0;
             display: flex;
             height: 100vh;
-            background-color: #181818; /* Dark background */
+            background-color: #212121; /* Dark background */
             color: #e0e0e0; /* Light text */
             flex-direction: column;
         }
@@ -82,6 +82,7 @@
         code {
             font-family: "Courier New", Courier, monospace;
             color: #ff9d00; /* Light code text */
+
         }
 
         h1, h2, h3, h4 {
@@ -94,6 +95,42 @@
 
         .math {
             color: #ff9d00; /* Math content color */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ffffff; /* White border */
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ffffff; /* White border */
+        }
+
+        th {
+            background-color: #383838; /* Dark header background */
+            color: #ffffff; /* Light text for headers */
+        }
+
+        tr:nth-child(even) {
+            background-color: #333; /* Alternate row background color */
+        }
+
+        tr:hover {
+            background-color: #444; /* Hover effect for rows */
+        }
+        
+        :not(pre)>code[class*=language-], pre[class*=language-] {
+            background: black;
+        }
+        code[class*=language-], pre[class*=language-] {
+            color: white;
+            background: 0 0;
+            text-shadow: 0;
+            background-color: #0d0d0d; /* Dark preview container */
+
         }
     </style>
 </head>
@@ -154,7 +191,39 @@
             const previewContent = document.getElementById('preview-output').innerHTML;
 
             // Add necessary styles to the print window
-            printWindow.document.write('<html><head><title>Print Preview</title><style>body{font-family: Arial, sans-serif; color: black;}</style></head><body>');
+            printWindow.document.write('<html><head><title>Print Preview</title>');
+            printWindow.document.write(`
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        color: black;
+                        background-color: white;
+                        margin: 20px;
+                    }
+                    table, th, td {
+                        border: 1px solid black;
+                        border-collapse: collapse;
+                    }
+                    th, td {
+                        padding: 8px;
+                        text-align: left;
+                    }
+                    pre {
+                        background-color: #f4f4f4;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        font-size: 14px;
+                        color: #333;
+                        white-space: pre-wrap;
+                        word-wrap: break-word;
+                    }
+                    code {
+                        font-family: "Courier New", Courier, monospace;
+                        color: #d14;
+                    }
+                </style>
+            `);
+            printWindow.document.write('</head><body>');
             printWindow.document.write(previewContent);
             printWindow.document.write('</body></html>');
 
