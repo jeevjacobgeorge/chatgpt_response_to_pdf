@@ -23,7 +23,7 @@
     <meta name="twitter:description" content="Convert ChatGPT responses to PDF format with support for syntax highlighting and math rendering. Preview, adjust, and print with ease.">
     <meta name="twitter:image" content="ff.png"> <!-- Replace with a valid image URL for Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <!-- MathJax Configuration -->
+
     <script>
         window.MathJax = {
             tex: {
@@ -39,6 +39,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- Include marked.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,114 +47,125 @@
             padding: 0;
             display: flex;
             height: 100vh;
-            background-color: #212121; /* Dark background */
-            color: #e0e0e0; /* Light text */
+            background-color: #212121;
+            color: #e0e0e0;
             flex-direction: column;
         }
 
         .container {
             display: flex;
-            flex-direction: row;
             width: 100%;
             height: 100%;
+            position: relative;
+            margin: 0;
+        }
+
+        .editor-container, .preview-container {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0px ;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
         .editor-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            border-right: 1px solid #333; /* Dark border */
-            box-sizing: border-box;
+            padding-left:5px;
+            background-color: #333;
+            color: #e0e0e0;
+        }
+
+        .preview-container {
+            padding:5px 20px;
+            
+            background-color: #222;
+            color: #e0e0e0;
+            flex: 2;
         }
 
         textarea {
             flex: 1;
-            width: 100%;
+            width: 99%;
             font-size: 16px;
-            padding: 10px;
-            box-sizing: border-box;
+            padding: 0px;
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #444;
             resize: none;
-            background-color: #333; /* Dark textarea background */
-            color: #e0e0e0; /* Light text */
-            border: 1px solid #444; /* Dark border */
+        }
+
+        .resize-bar {
+            width: 10px;
+            cursor: ew-resize;
+            background-color: #444;
+            position: absolute;
+            /* left: 50%; */
+            top: 0;
+            height: 100%;
+        }
+
+        .resize-bar:hover {
+            background-color: #ff9d00;
         }
 
         .preview-container {
-            flex: 2;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            background-color: #222; /* Dark preview container */
-            color: #e0e0e0; /* Light text */
+            flex-grow: 1;
         }
 
+        .editor-container {
+            flex-grow: 1;
+        }
+
+        /* Styles for code preview and math rendering */
         pre {
-            background-color: #2c2c2c; /* Dark code block background */
+            background-color: #2c2c2c;
             padding: 10px;
             border-radius: 5px;
             font-size: 14px;
             line-height: 1.4;
             overflow-x: auto;
-            color: #e0e0e0; /* Light text */
+            color: #e0e0e0;
         }
 
         code {
             font-family: "Courier New", Courier, monospace;
-            color: #ff9d00; /* Light code text */
-
+            color: #ff9d00;
         }
 
-        h1, h2, h3, h4 {
-            color: #ff9d00; /* Light heading color */
+        .token.operator, .token.url {
+            color: #d08113;
         }
 
-        hr {
-            border-color: #444; /* Dark horizontal rule */
-        }
-
-        .math {
-            color: #ff9d00; /* Math content color */
+        .token.keyword {
+            color: #ff9d00;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            border: 1px solid #ffffff; /* White border */
+            border: 1px solid #ffffff;
         }
 
         th, td {
             padding: 10px;
             text-align: left;
-            border: 1px solid #ffffff; /* White border */
+            border: 1px solid #ffffff;
         }
 
         th {
-            background-color: #383838; /* Dark header background */
-            color: #ffffff; /* Light text for headers */
+            background-color: #383838;
+            color: #ffffff;
         }
 
         tr:nth-child(even) {
-            background-color: #333; /* Alternate row background color */
+            background-color: #333;
         }
 
         tr:hover {
-            background-color: #444; /* Hover effect for rows */
+            background-color: #444;
         }
-        
-        :not(pre)>code[class*=language-], pre[class*=language-] {
-            background: black;
-        }
-        code[class*=language-], pre[class*=language-] {
-            color: white;
-            background: 0 0;
-            text-shadow: none;
-            background-color: #0d0d0d; /* Dark preview container */
 
-        }
-        .token.operator, .token.url {
-            color: #d08113;
-            background: none;
+        .math {
+            color: #ff9d00;
         }
     </style>
 </head>
@@ -162,58 +174,82 @@
         <div class="editor-container">
             <textarea id="response-input" placeholder="Paste ChatGPT response here..."></textarea>
         </div>
+
+        <div class="resize-bar" id="resize-bar"></div>
+
         <div class="preview-container" id="preview-output">
             <!-- Preview will appear here -->
         </div>
     </div>
 
-    <!-- Print Button -->
-    <button onclick="printPreview()" style="position: absolute; top: 20px; right: 20px; background-color: #ff9d00; color: #181818; padding: 10px 15px; border: none; font-size: 16px; cursor: pointer;">
-        Print Preview
+    <button onclick="printPreview()" style="position: absolute; top: 10px; right: 10px; background-color: #ff9d00; color: #181818; padding: 10px 15px; border: none; font-size: 16px; cursor: pointer;border-radius: 6px;">
+        Print
     </button>
 
     <script>
         const inputElement = document.getElementById('response-input');
         const preview = document.getElementById('preview-output');
+        const resizeBar = document.getElementById('resize-bar');
+        const container = document.querySelector('.container');
+
+        let isResizing = false;
 
         inputElement.addEventListener('input', () => generatePreview());
 
         function generatePreview() {
             let input = inputElement.value;
-
-            // Step 1: Escape backslashes for Math expressions
             input = input.replace(/\\([\\\[\](){}^_])/g, '\\\\$1');
-
-            // Clear previous output
             preview.innerHTML = '';
-
-            // Check if input is empty
             if (input.trim() === '') {
                 preview.innerHTML = 'Please paste a ChatGPT response to preview.';
                 return;
             }
-
-            // Step 2: Use marked.js to convert the Markdown to HTML
             let htmlContent = marked.parse(input);
-
-            // Step 3: Render the HTML content in the preview container
             preview.innerHTML = htmlContent;
-
-            // Step 4: Trigger MathJax to render LaTeX math expressions
             MathJax.typesetPromise([preview]).catch((err) => console.log(err));
-
-            // Step 5: Highlight code syntax
             Prism.highlightAll();
         }
 
-        function printPreview() {
-            // Create a new window for printing the preview
-            const printWindow = window.open('', '', 'height=600,width=800');
+        resizeBar.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleMouseMove);
+            });
+        });
 
-            // Get the content of the preview container
+        function handleMouseMove(e) {
+            if (isResizing) {
+                const containerRect = container.getBoundingClientRect();
+                const newWidth = e.clientX - containerRect.left;
+                const minWidth = 100;
+                const maxWidth = containerRect.width - minWidth;
+
+                if (newWidth >= minWidth && newWidth <= maxWidth) {
+                    const editorWidth = newWidth;
+                    const previewWidth = containerRect.width - newWidth - resizeBar.offsetWidth;
+
+                    document.querySelector('.editor-container').style.flex = `0 0 ${editorWidth}px`;
+                    document.querySelector('.preview-container').style.flex = `0 0 ${previewWidth}px`;
+                    resizeBar.style.left = `${newWidth}px`;
+
+                }
+            }
+        }   
+
+        const containerRect = container.getBoundingClientRect();
+        const initialWidth = containerRect.width / 2.2;
+        document.querySelector('.editor-container').style.flex = `0 0 ${initialWidth}px`;
+        document.querySelector('.resize-bar').style.left = `${initialWidth}px`;
+
+
+        // document.querySelector('.preview-container').style.flex = `0 0 ${initialWidth}px`;
+
+        function printPreview() {
+            const printWindow = window.open('', '', 'height=600,width=800');
             const previewContent = document.getElementById('preview-output').innerHTML;
 
-            // Add necessary styles to the print window
             printWindow.document.write('<html><head><title>Print Preview</title>');
             printWindow.document.write(`
                 <style>
@@ -250,7 +286,6 @@
             printWindow.document.write(previewContent);
             printWindow.document.write('</body></html>');
 
-            // Wait for the content to be fully loaded, then print
             printWindow.document.close();
             printWindow.print();
         }
