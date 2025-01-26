@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Response to PDF</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Link to your favicon file -->
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
     <!-- Meta Tags for SEO and Social Media Sharing -->
     <meta name="description" content="Edit Store Share ChatGPT response (formulas, tables, code) to PDF">
     <meta name="keywords" content="ChatGPT, PDF, preview, response, markdown, LaTeX, math rendering, syntax highlighting, print preview">
@@ -38,7 +38,9 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- Include marked.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -186,7 +188,7 @@
         }
     </style>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    
 </head>
 <body>
     <!-- Navbar with Print button -->
@@ -229,7 +231,8 @@
             let htmlContent = marked.parse(input);
             preview.innerHTML = htmlContent;
             MathJax.typesetPromise([preview]).catch((err) => console.log(err));
-            Prism.highlightAll();
+            Prism.highlightAll();            // console.log('Preview content:', preview.innerHTML);  // Debugging the generated HTML
+
         }
 
         resizeBar.addEventListener('mousedown', (e) => {
