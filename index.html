@@ -215,7 +215,6 @@
         const preview = document.getElementById('preview-output');
         const resizeBar = document.getElementById('resize-bar');
         const container = document.querySelector('.container');
-
         let isResizing = false;
 
         inputElement.addEventListener('input', () => generatePreview());
@@ -231,8 +230,7 @@
             let htmlContent = marked.parse(input);
             preview.innerHTML = htmlContent;
             MathJax.typesetPromise([preview]).catch((err) => console.log(err));
-            Prism.highlightAll();            // console.log('Preview content:', preview.innerHTML);  // Debugging the generated HTML
-
+            Prism.highlightAll();             
         }
 
         resizeBar.addEventListener('mousedown', (e) => {
@@ -262,11 +260,13 @@
             }
         }
 
+        // Set initial resize
         const containerRect = container.getBoundingClientRect();
         const initialWidth = containerRect.width / 2.2;
         document.querySelector('.editor-container').style.flex = `0 0 ${initialWidth}px`;
         document.querySelector('.resize-bar').style.left = `${initialWidth}px`;
 
+        // Print preview function
         function printPreview() {
             const printWindow = window.open('', '', 'height=600,width=800');
             const previewContent = document.getElementById('preview-output').innerHTML;
@@ -298,18 +298,33 @@
                         word-wrap: break-word;
                     }
                     code {
-                        font-family: "Courier New", Courier, monospace;
-                        color: black;
+                    font-family: "Courier New", Courier, monospace;
+                    color: black;
                     }
                 </style>
             `);
+            
             printWindow.document.write('</head><body>');
             printWindow.document.write(previewContent);
             printWindow.document.write('</body></html>');
-
             printWindow.document.close();
             printWindow.print();
+            printWindow.close();
         }
+
+        // Handle unsaved changes when trying to close the tab
+        let isContentChanged = false;
+        inputElement.addEventListener('input', () => {
+            isContentChanged = true;
+        });
+
+        window.addEventListener('beforeunload', (e) => {
+            if (isContentChanged) {
+                const message = 'Changes you made may not be saved. Do you want to leave?';
+                e.returnValue = message; // Standard for most browsers
+                return message; // For some older browsers
+            }
+        });
     </script>
 </body>
 </html>
