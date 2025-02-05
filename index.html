@@ -108,7 +108,7 @@
         }
 
         .preview-container {
-            padding:5px 20px;
+            padding:5px 10px;
             background-color: #222;
             color: #e0e0e0;
             flex: 2;
@@ -195,8 +195,22 @@
 </head>
 <body>
     <!-- Navbar with Print button -->
-    <div class="navbar">
-        <div class="logo"></div>Edit Share & Store multiple ChatGPT responses to single PDF. (Alson support formulas, tables, code) 
+    <div class="navbar"  >
+        <div>
+        <p style="margin: 0px;">
+            <a href="mailto:jeevjacobgeorge@gmail.com" style="color: #faa404; margin: 0 5px; text-decoration: none;">
+            <img src="https://img.icons8.com/ios-filled/16/ff9d00/mail.png" alt="Email Icon"/>
+            </a> 
+            <a href="https://linkedin.com/in/jeev-george" target="_blank" style="color: #faa404; margin: 0 5px;text-decoration: none;">
+            <img src="https://img.icons8.com/ios-filled/16/ff9d00/linkedin.png" alt="LinkedIn Icon"/>
+            </a> 
+            <a href="https://github.com/jeev-george" target="_blank" style="color: #faa404; margin: 0 0px;">
+            <img src="https://img.icons8.com/ios-filled/16/ff9d00/github.png" alt="GitHub Icon"/>
+            </a>
+        </p>
+        </div>
+
+        <p  style="margin: 0px" >Edit Share & Store multiple ChatGPT responses to single PDF. (Also support formulas, tables, code) </p>
         <button onclick="printPreview()">Print</button>
     </div>
 
@@ -212,6 +226,7 @@
             <!-- Preview will appear here -->
         </div>
     </div>
+    <!-- Footer -->
 
     <script>
         const inputElement = document.getElementById('response-input');
@@ -328,5 +343,6 @@
             }
         });
     </script>
+
 </body>
 </html>
