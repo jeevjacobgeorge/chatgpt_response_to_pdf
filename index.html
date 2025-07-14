@@ -300,8 +300,9 @@
         function printPreview() {
             const printWindow = window.open('', '', 'height=600,width=800');
             const previewContent = document.getElementById('preview-output').innerHTML;
-
-            printWindow.document.write('<html><head><title>Print Preview</title>');
+            const firstHeading = document.getElementById('preview-output').querySelector('h1, h2, h3, h4, h5, h6');
+            const fileName = firstHeading ? firstHeading.textContent.trim() : 'Document';
+            printWindow.document.write('<html><head><title>'+fileName+'</title>');
             printWindow.document.write(`
                 <style>
                     body {
